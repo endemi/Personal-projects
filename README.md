@@ -1,7 +1,5 @@
 # First Project - Quant Trading
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-
 ## Overview
 
 This repository contains my first project on **quantitative trading**.  
