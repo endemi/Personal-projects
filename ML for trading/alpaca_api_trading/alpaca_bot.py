@@ -6,8 +6,6 @@ import config
 
 client = TradingClient(config.API_KEY, config.SECRET_KEY, paper=True)
 account = dict(client.get_account())
-for k,v in account.items():
-    print(f"{k}: {v}")
 
 
 
@@ -18,13 +16,28 @@ order_details = MarketOrderRequest(
     time_in_force=TimeInForce.GTC  # <-- use GTC for crypto
 )
 
-order = client.submit_order(order_details)
 
-trades = TradingStream(config.API_KEY, config.SECRET_KEY, paper=True)
+def buy_order():
+    order = client.submit_order(order_details)
 
-async def trade_updates_handler(trade):
-    print(f"Trade update: {trade}")
+    trades = TradingStream(config.API_KEY, config.SECRET_KEY, paper=True)
+
+    async def trade_updates_handler(trade):
+        print(f"Trade update: {trade}")
 
 
-trades.subscribe_trade_updates(trade_updates_handler)
-trades.run()
+    trades.subscribe_trade_updates(trade_updates_handler)
+    trades.run()
+
+
+def cancel_all_order(order_id):
+    client.close_all_positions(cancel_orders=True)
+    
+
+assets = [asset for asset in client.get_all_positions()]
+positions = [(asset.symbol, asset.qty, asset.current_price) for asset in assets]
+print("Postions")
+print(f"{'Symbol':9}{'Qty':>4}{'Value':>15}")
+print("-" * 28)
+for position in positions:
+    print(f"{position[0]:9}{position[1]:>4}{float(position[1]) * float(position[2]):>15.2f}")
