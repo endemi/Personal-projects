@@ -1,7 +1,0 @@
-time,side,status,filled_quantity,symbol,asset.asset_type,asset.right,asset.strike,asset.expiration,price,type,asset.multiplier,trade_cost
-2025-03-05 09:30:00-05:00,buy,new,,GLD,stock,,0.0,,,market,1,
-2025-03-05 09:30:00-05:00,buy,fill,354.0,GLD,stock,,0.0,,267.9700012207031,market,1,0.0
-2025-03-25 10:30:00-04:00,sell,new,,GLD,stock,,0.0,,,market,1,
-2025-03-25 10:30:00-04:00,sell,fill,354.0,GLD,stock,,0.0,,278.7799987792969,market,1,0.0
-2025-03-28 10:30:00-04:00,buy,new,,GLD,stock,,0.0,,,market,1,
-2025-03-28 10:30:00-04:00,buy,fill,347.0,GLD,stock,,0.0,,283.82000732421875,market,1,0.0

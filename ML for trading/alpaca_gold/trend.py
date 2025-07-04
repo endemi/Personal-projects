@@ -14,7 +14,6 @@ class TrendStrategy(Strategy):
         "stop_loss": 0.02,      # 2% stop-loss (can be optimized)
         "take_profit": 0.06     # 6% take-profit (3:1 ratio, can be optimized)
     }
-    initial_cash = 2000
 
     def initialize(self):
         self.vars.signal = None
