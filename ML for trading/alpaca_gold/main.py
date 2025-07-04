@@ -13,7 +13,7 @@ if __name__ == "__main__":
         bot.add_strategy(strategy)
         bot.run_all()
     else:
-        start = datetime(2025, 1, 1)
+        start = datetime(2024, 1, 1)
         end = datetime(2025, 4, 7)
         TrendStrategy.backtest(
             YahooDataBacktesting,
