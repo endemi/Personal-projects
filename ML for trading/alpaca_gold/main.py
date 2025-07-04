@@ -1,23 +1,23 @@
 # main.py
 
 from datetime import datetime
-from lumibot.traders import Trader
 from lumibot.credentials import IS_BACKTESTING
+from lumibot.traders import Trader
 from lumibot.backtesting import YahooDataBacktesting
-from trend import SimpleETFStrategy
-from config import SYMBOL
+from trend import TrendStrategy
 
 if __name__ == "__main__":
     if not IS_BACKTESTING:
+        strategy = TrendStrategy()
         bot = Trader()
-        bot.add_strategy(SimpleETFStrategy)
+        bot.add_strategy(strategy)
         bot.run_all()
     else:
-        start = datetime(2023, 1, 1)
-        end = datetime(2025, 7, 4)
-        SimpleETFStrategy.backtest(
+        start = datetime(2025, 1, 1)
+        end = datetime(2025, 4, 7)
+        TrendStrategy.backtest(
             YahooDataBacktesting,
             start,
             end,
-            benchmark_asset=SYMBOL
+            benchmark_asset="GLD"
         )
