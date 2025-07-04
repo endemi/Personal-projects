@@ -16,7 +16,7 @@ for sl in STOP_LOSS_PERCENTS:
     }
     stats, _ = TrendStrategy.backtest(
         YahooDataBacktesting,
-        datetime(2024, 1, 1),
+        datetime(2025, 1, 1),
         datetime(2025, 7, 4),
         benchmark_asset="GLD",
         parameters=params,

@@ -22,7 +22,7 @@ class TrendStrategy(Strategy):
         self.sleeptime = "1D"  # Daily bars for Yahoo
 
     def on_trading_iteration(self):
-        bars = self.get_historical_prices(self.parameters['symbol'], 10, "day")
+        bars = self.get_historical_prices(self.parameters['symbol'], 4, "day")
         df = bars.df
 
         # Ultra-fast EMAs for high trade frequency
@@ -56,8 +56,8 @@ class TrendStrategy(Strategy):
         price = self.get_last_price(symbol)
         cash = self.get_cash()
         pos = self.get_position(symbol)
-        # Use 95% of cash for each trade for higher risk
-        quantity = int(cash * 0.95 // price)
+   
+        quantity = int(cash * 0.8 // price)
 
         # Percentage-based stop-loss and take-profit
         if pos:
