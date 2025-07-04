@@ -1,3 +1,4 @@
+
 from datetime import datetime, timedelta
 from lumibot.backtesting import YahooDataBacktesting
 from lumibot.credentials import IS_BACKTESTING
@@ -6,20 +7,19 @@ from lumibot.traders import Trader
 import numpy as np
 import pandas as pd
 
-class Trend(Strategy):
 
+class Trend(Strategy):
     parameters = {
-        "symbol": "GLD",
-        "quantity": None,
+        "symbol" : "GLD",
+        "quantity" : None
     }
 
     def initialize(self):
-        self.vars.signal = 0
+        self.vars.signal = None
         self.vars.start = "2023-01-01"
         self.sleeptime = "1D"
-
     
-def on_trading_iteration(self):
+    def on_trading_iteration(self):
 
         bars = self.get_historical_prices(self.parameters['symbol'], 22, "day")
         gld = bars.df
@@ -74,4 +74,3 @@ if __name__ == "__main__":
             end,
             benchmark_asset= "GLD"
         )
-        
