@@ -13,8 +13,8 @@ if __name__ == "__main__":
         bot.add_strategy(MaximizedTrendStrategy)
         bot.run_all()
     else:
-        start = datetime(2023, 1, 1)
-        end = datetime(2024, 11, 24)
+        start = datetime(2024, 1, 1)
+        end = datetime(2025, 7, 4)
         MaximizedTrendStrategy.backtest(
             YahooDataBacktesting,
             start,
