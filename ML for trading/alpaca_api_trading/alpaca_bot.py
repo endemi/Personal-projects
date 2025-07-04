@@ -4,11 +4,12 @@ from alpaca.trading.requests import MarketOrderRequest
 from alpaca.trading.stream import TradingStream
 import config
 
+# Initialize the Alpaca trading client
 client = TradingClient(config.API_KEY, config.SECRET_KEY, paper=True)
 account = dict(client.get_account())
 
 
-
+#order_details = MarketOrderRequest(
 order_details = MarketOrderRequest(
     symbol="ETHUSD",
     qty=10,
@@ -16,7 +17,7 @@ order_details = MarketOrderRequest(
     time_in_force=TimeInForce.GTC  # <-- use GTC for crypto
 )
 
-
+#Function to place a buy order
 def buy_order():
     order = client.submit_order(order_details)
 
@@ -30,10 +31,12 @@ def buy_order():
     trades.run()
 
 
+#Function to place a sell order
 def cancel_all_order(order_id):
     client.close_all_positions(cancel_orders=True)
-    
 
+
+#check positions and print them
 assets = [asset for asset in client.get_all_positions()]
 positions = [(asset.symbol, asset.qty, asset.current_price) for asset in assets]
 print("Postions")
