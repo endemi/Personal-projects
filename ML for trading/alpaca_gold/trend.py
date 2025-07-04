@@ -11,8 +11,8 @@ class TrendStrategy(Strategy):
     parameters = {
         "symbol": SYMBOL,
         "quantity": QUANTITY,
-        "atr_mult_sl": 1.0,      # ATR multiplier for stop-loss (tighter)
-        "atr_mult_tp": 2.5       # ATR multiplier for take-profit (aggressive)
+        "stop_loss": 0.02,      # 2% stop-loss (can be optimized)
+        "take_profit": 0.06     # 6% take-profit (3:1 ratio, can be optimized)
     }
     initial_cash = 2000
 
@@ -22,27 +22,25 @@ class TrendStrategy(Strategy):
         self.sleeptime = "1D"  # Daily bars for Yahoo
 
     def on_trading_iteration(self):
-        bars = self.get_historical_prices(self.parameters['symbol'], 20, "day")
+        bars = self.get_historical_prices(self.parameters['symbol'], 10, "day")
         df = bars.df
 
-        # Calculate momentum (rate of change)
-        df['momentum'] = df['close'].pct_change(3)
+        # Ultra-fast EMAs for high trade frequency
+        df['fast_ema'] = df['close'].ewm(span=2).mean()
+        df['slow_ema'] = df['close'].ewm(span=5).mean()
+        df['momentum'] = df['close'].pct_change(2)
 
-        # Volatility breakout: price above recent high or below recent low
-        df['recent_high'] = df['high'].rolling(5).max()
-        df['recent_low'] = df['low'].rolling(5).min()
-
-        # ATR for dynamic stops
-        df['H-L'] = df['high'] - df['low']
-        df['H-PC'] = abs(df['high'] - df['close'].shift(1))
-        df['L-PC'] = abs(df['low'] - df['close'].shift(1))
-        df['TR'] = df[['H-L', 'H-PC', 'L-PC']].max(axis=1)
-        df['ATR'] = df['TR'].rolling(7).mean()
-
-        # Buy signal: strong momentum up or breakout above recent high
-        buy_signal = (df['momentum'].iloc[-1] > 0.01) or (df['close'].iloc[-1] > df['recent_high'].iloc[-2])
-        # Sell signal: strong momentum down or breakdown below recent low
-        sell_signal = (df['momentum'].iloc[-1] < -0.01) or (df['close'].iloc[-1] < df['recent_low'].iloc[-2])
+        # Signal logic: EMA cross + momentum filter
+        buy_signal = (
+            (df['fast_ema'].iloc[-1] > df['slow_ema'].iloc[-1]) and
+            (df['fast_ema'].iloc[-2] <= df['slow_ema'].iloc[-2]) and
+            (df['momentum'].iloc[-1] > 0.01)
+        )
+        sell_signal = (
+            (df['fast_ema'].iloc[-1] < df['slow_ema'].iloc[-1]) and
+            (df['fast_ema'].iloc[-2] >= df['slow_ema'].iloc[-2]) and
+            (df['momentum'].iloc[-1] < -0.01)
+        )
 
         if buy_signal:
             self.vars.signal = "BUY"
@@ -51,7 +49,6 @@ class TrendStrategy(Strategy):
         else:
             self.vars.signal = None
 
-        self.vars.atr = df['ATR'].iloc[-1]
         self.execute_trade()
 
     def execute_trade(self):
@@ -59,19 +56,19 @@ class TrendStrategy(Strategy):
         price = self.get_last_price(symbol)
         cash = self.get_cash()
         pos = self.get_position(symbol)
-        quantity = int(cash * 0.8 // price)
-        atr = self.vars.atr if hasattr(self.vars, "atr") and self.vars.atr is not None else 1
+        # Use 95% of cash for each trade for higher risk
+        quantity = int(cash * 0.95 // price)
 
-        # ATR-based stop-loss and take-profit
+        # Percentage-based stop-loss and take-profit
         if pos:
             entry_price = getattr(pos, "avg_price", None)
             if entry_price is not None:
-                stop_loss = self.parameters.get("atr_mult_sl", 1.0) * atr
-                take_profit = self.parameters.get("atr_mult_tp", 2.5) * atr
-                if price <= entry_price - stop_loss:
+                stop_loss = self.parameters.get("stop_loss", 0.02)
+                take_profit = self.parameters.get("take_profit", 0.06)
+                if price <= entry_price * (1 - stop_loss):
                     self.sell_all()
                     return
-                if price >= entry_price + take_profit:
+                if price >= entry_price * (1 + take_profit):
                     self.sell_all()
                     return
 
