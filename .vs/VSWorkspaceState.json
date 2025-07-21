@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\ML for trading"
+    "\\ML for trading",
+    "\\ML for trading\\alpaca_gold"
   ],
-  "SelectedNode": "\\Hello.py",
+  "SelectedNode": "\\ML for trading\\alpaca_gold\\config.py",
   "PreviewInSolutionExplorer": false
 }
