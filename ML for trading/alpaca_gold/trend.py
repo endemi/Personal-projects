@@ -18,7 +18,7 @@ class TrendStrategy(Strategy):
     def initialize(self):
         self.vars.signal = None
         self.vars.start = START_DATE
-        self.sleeptime = "1D"  # Daily bars for Yahoo
+        self.sleeptime = "4H"  # Daily bars for Yahoo
 
     def on_trading_iteration(self):
         bars = self.get_historical_prices(self.parameters['symbol'], 4, "day")

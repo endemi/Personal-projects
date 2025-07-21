@@ -7,6 +7,7 @@ from lumibot.backtesting import YahooDataBacktesting
 from trend import TrendStrategy
 
 if __name__ == "__main__":
+    
     if not IS_BACKTESTING:
         strategy = TrendStrategy()
         bot = Trader()
