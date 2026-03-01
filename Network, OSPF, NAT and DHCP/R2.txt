@@ -1,0 +1,133 @@
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Daspur_R2
+!
+!
+!
+!
+ip dhcp excluded-address 43.0.0.1 43.0.0.4
+ip dhcp excluded-address 43.0.4.1 43.0.4.4
+!
+ip dhcp pool VLAN347_Dogs
+ network 43.0.0.0 255.255.252.0
+ default-router 43.0.0.1
+ip dhcp pool VLAN470_Cats
+ network 43.0.4.0 255.255.255.0
+ default-router 43.0.4.1
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 43.0.5.129 255.255.255.224
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial0/1/0
+ bandwidth 256
+ ip address 43.0.5.170 255.255.255.252
+ ip nat inside
+ clock rate 2000000
+!
+interface Serial0/1/1
+ ip address 191.22.40.1 255.255.255.252
+ ip nat outside
+!
+interface Serial0/2/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/2/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 2.2.2.2
+ log-adjacency-changes
+ network 191.22.40.0 0.0.0.3 area 0
+ network 43.0.5.168 0.0.0.3 area 0
+ network 43.0.5.128 0.0.0.3 area 0
+ default-information originate
+!
+ip nat pool VLAN1Pool 135.12.64.1 135.12.64.31 netmask 255.255.255.128
+ip nat pool VLANCatsPool 135.12.64.64 135.12.64.127 netmask 255.255.255.128
+ip nat pool VLANDogsPool 135.12.64.32 135.12.64.63 netmask 255.255.255.128
+ip nat inside source list NAT_R1_Link pool VLAN1Pool overload
+ip nat inside source list NAT_VLAN1 pool VLAN1Pool overload
+ip nat inside source list NAT_VLANXXX pool VLANDogsPool overload
+ip nat inside source list NAT_VLANYYY pool VLANCatsPool overload
+ip classless
+ip route 0.0.0.0 0.0.0.0 191.22.40.2 
+!
+ip flow-export version 9
+!
+!
+ip access-list extended NAT_VLAN1
+ permit ip 43.0.5.160 0.0.0.7 any
+ip access-list extended NAT_VLANXXX
+ permit ip 43.0.0.0 0.0.3.255 any
+ip access-list extended NAT_VLANYYY
+ permit ip 43.0.4.0 0.0.0.255 any
+ip access-list standard ACLTelnet
+ deny 43.0.0.0 0.0.3.255
+ permit any
+ip access-list extended NAT_R1_Link
+ permit ip 43.0.5.168 0.0.0.3 any
+!
+banner motd ^C105334704 230 friday^C
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ access-class ACLTelnet in
+ password cisco
+ login
+!
+!
+!
+end

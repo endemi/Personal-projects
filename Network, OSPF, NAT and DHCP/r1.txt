@@ -1,0 +1,193 @@
+version 16.7
+no service timestamps debug uptime
+no service timestamps log uptime
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+!
+hostname Nagri_R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+!
+!
+!
+!
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+license udi pid ISR4321/K9 sn FDO214705VP
+license boot suite FoundationSuiteK9
+license boot level securityk9
+no license smart enable
+diagnostic bootup level minimal
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+!
+!
+!
+redundancy
+ mode none
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ negotiation auto
+!
+interface GigabitEthernet0/0/1.1
+ encapsulation dot1Q 1 native
+ ip address 43.0.5.161 255.255.255.248
+ ip helper-address 43.0.5.170
+!
+interface GigabitEthernet0/0/1.347
+ encapsulation dot1Q 347
+ ip address 43.0.0.1 255.255.252.0
+ ip helper-address 43.0.5.170
+ ip access-group ACLVLANXXX in
+!
+interface GigabitEthernet0/0/1.470
+ encapsulation dot1Q 470
+ ip address 43.0.4.1 255.255.255.0
+ ip helper-address 43.0.5.170
+ ip access-group ACLVLANYYY in
+!
+interface Serial0/1/0
+ bandwidth 256
+ ip address 43.0.5.169 255.255.255.252
+!
+interface Serial0/1/1
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0
+ vrf forwarding Mgmt-intf
+ no ip address
+ shutdown
+ negotiation auto
+!
+router ospf 1
+ router-id 1.1.1.1
+ passive-interface GigabitEthernet0/0/1.1
+ passive-interface GigabitEthernet0/0/1.347
+ passive-interface GigabitEthernet0/0/1.470
+ network 43.0.4.0 0.0.0.255 area 0
+ network 43.0.5.160 0.0.0.7 area 0
+ network 43.0.5.168 0.0.0.3 area 0
+ network 43.0.0.0 0.0.63.255 area 0
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip tftp source-interface GigabitEthernet0
+!
+!
+!
+ip access-list standard ACLTelnet
+ permit 43.0.0.0 0.0.3.255
+ deny   any
+!
+ip access-list extended ACLVLANXXX
+ permit tcp 43.0.0.0 0.0.3.255 154.3.0.0 0.0.255.255 eq www
+ deny   ip 43.0.0.0 0.0.3.255 154.3.0.0 0.0.255.255
+ permit icmp 43.0.0.0 0.0.3.255 43.0.4.0 0.0.0.255 echo-reply
+ deny   icmp 43.0.0.0 0.0.3.255 43.0.4.0 0.0.0.255
+ permit ip any any
+ip access-list extended ACLVLANYYY
+ deny   ip 43.0.4.0 0.0.0.255 43.0.5.128 0.0.0.31
+ permit ip any any
+!
+!
+!
+!
+control-plane
+!
+banner motd ^CC105334704 230 friday^C
+!
+line con 0
+ transport input none
+ stopbits 1
+line aux 0
+ stopbits 1
+line vty 0 4
+ access-class ACLTelnet in
+ password cisco
+ login
+!
+wsma agent exec
+!
+wsma agent config
+!
+wsma agent filesys
+!
+wsma agent notify
+!
+!
+end
