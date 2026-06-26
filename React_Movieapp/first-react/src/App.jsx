@@ -1,14 +1,15 @@
 const Card = ({title}) => {
   return (
-    <h2>{title}</h2>
+    <div className="card">
+      <h2>{title}</h2>
+    </div>
   )
 }
 
 const App = () => {
   return (
-  <div>
-    <h2>Functional </h2>
-    <Card title="Star" rating={5} isCool={true} actors={[{name:'Actors'}]}/>
+  <div className="card-container">
+    <Card title="Star" rating={5} isCool={true}/>
     <Card title='Lion'/>
   </div>
   )
