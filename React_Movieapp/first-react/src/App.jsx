@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Search from './components/Search'
+import Spinner from './components/Spinner'
 
 const API_BASE_URL = 'https://api.themoviedb.org/3'
 
@@ -58,18 +59,16 @@ const App = () => {
             </header>
 
             <section className='all-movies'>
-                <h2>All Movies</h2>
+                <h2 className='mt-[40px]'>All Movies</h2>
 
                 {isLoading ? (
-                    <p>Loading...</p>
+                    <Spinner />
                 ) : errorMessage ? (
                     <p className='text-red-500'>{errorMessage}</p>
                 ) : (
                     <ul>
                         {movieList.map((movie) => (
-                            <li key={movie.id} className='text-white'>
-                                {movie.title}
-                            </li>
+                            <MovieCard key={movie.id} movie={movie} />
                         ))}
                     </ul>
                 )}
