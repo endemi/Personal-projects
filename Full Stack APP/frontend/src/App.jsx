@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import ContactList from './ContactList'
 import './App.css'
 
 function App() {
@@ -16,11 +17,7 @@ function App() {
 
   }
 
-  return (
-    <>
+  return (<ContactList contacts={contacts}/>)
 
-    </>
-  )
 }
-
 export default App
